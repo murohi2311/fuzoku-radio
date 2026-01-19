@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>お便り管理画面</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Roboto', 'Noto Sans JP', sans-serif;
+      background: #f5f5f5;
+      min-height: 100vh;
+      padding: 0;
+      color: #202124;
+    }
+
+    .header {
+      background: white;
+      border-bottom: 1px solid #e8e8e8;
+      padding: 16px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3);
+    }
+
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .logo {
+      font-size: 20px;
+      font-weight: 500;
+      color: #202124;
+    }
+
+    .stats {
+      display: flex;
+      gap: 24px;
+      margin-left: auto;
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .stat-number {
+      font-size: 20px;
+      font-weight: 500;
+      color: #202124;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #5f6368;
+      margin-top: 4px;
+    }
+    
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .tabs-nav {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid #e8e8e8;
+      margin-bottom: 24px;
+    }
+
+    .tab-btn {
+      padding: 12px 16px;
+      background: none;
+      border: none;
+      color: #5f6368;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .tab-btn:hover {
+      color: #202124;
+      background: rgba(60, 64, 67, 0.06);
+    }
+
+    .tab-btn.active {
+      color: #1f71c6;
+      border-bottom-color: #1f71c6;
+    }
+
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .section {
+      margin-bottom: 32px;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 500;
+      margin-bottom: 16px;
+      color: #202124;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      color: #202124;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #dadce0;
+      border-radius: 4px;
+      font-size: 14px;
+      font-family: inherit;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: #1f71c6;
+      box-shadow: 0 0 0 3px rgba(31, 113, 198, 0.1);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .btn {
+      padding: 10px 24px;
+      background: #1f71c6;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn:hover {
+      background: #1666b2;
+      box-shadow: 0 1px 3px 0 rgba(60, 64, 67, 0.3);
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-icon {
+      font-size: 16px;
+    }
+
+    .btn-text {
+      display: none;
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 13px;
+    }
+
+    .btn-danger {
+      background: #d33b27;
+      padding: 6px 8px;
+      font-size: 16px;
+    }
+
+    .btn-danger:hover {
+      background: #c5221f;
+    }
+
+    .themes-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 12px;
+    }
+
+    .theme-card {
+      background: white;
+      padding: 16px;
+      border-radius: 8px;
+      border: 1px solid #e8e8e8;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .theme-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #1f71c6, #34a853);
+    }
+
+    .theme-card:hover {
+      box-shadow: 0 1px 3px 0 rgba(60, 64, 67, 0.3);
+      border-color: #dadce0;
+    }
+
+    .theme-card-title {
+      font-size: 16px;
+      font-weight: 500;
+      color: #202124;
+      margin-bottom: 8px;
+      margin-top: 4px;
+    }
+
+    .theme-card-desc {
+      font-size: 13px;
+      color: #5f6368;
+      margin-bottom: 10px;
+      line-height: 1.4;
+    }
+
+    .theme-card-date {
+      font-size: 12px;
+      color: #80868b;
+      margin-bottom: 12px;
+      display: flex;
+      gap: 4px;
+    }
+
+    .theme-card-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .tabs-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .filter-tab-btn {
+      padding: 8px 16px;
+      background: white;
+      color: #5f6368;
+      border: 1px solid #dadce0;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .filter-tab-btn:hover {
+      background: #f8f9fa;
+      border-color: #1f71c6;
+      color: #1f71c6;
+    }
+
+    .filter-tab-btn.active {
+      background: #1f71c6;
+      color: white;
+      border-color: #1f71c6;
+    }
+
+    .messages-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .message-card {
+      background: white;
+      padding: 16px;
+      border-radius: 8px;
+      border: 1px solid #e8e8e8;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .message-card:hover {
+      box-shadow: 0 1px 3px 0 rgba(60, 64, 67, 0.3);
+      border-color: #dadce0;
+    }
+
+    .message-card.read {
+      opacity: 0.7;
+      background: #fafafa;
+    }
+
+    .message-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+      gap: 12px;
+    }
+
+    .message-info {
+      flex: 1;
+    }
+
+    .message-theme {
+      font-size: 12px;
+      color: #80868b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .message-sender {
+      font-size: 15px;
+      font-weight: 500;
+      color: #202124;
+      margin-bottom: 4px;
+    }
+
+    .message-meta {
+      display: flex;
+      gap: 12px;
+      font-size: 13px;
+      color: #5f6368;
+    }
+
+    .message-date {
+      color: #5f6368;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .message-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      background: #fce8e6;
+      color: #c5221f;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .message-content {
+      color: #202124;
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 12px;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .message-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 48px 24px;
+      color: #5f6368;
+    }
+
+    .empty-state-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+
+    .empty-state-text {
+      font-size: 16px;
+    }
+
+    .alert {
+      padding: 12px 16px;
+      border-radius: 4px;
+      margin-bottom: 16px;
+      display: none;
+      animation: slideDown 0.3s ease;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .alert.success {
+      background: #e6f4ea;
+      color: #0d652d;
+      border: 1px solid #a8d5ba;
+    }
+
+    .alert.error {
+      background: #fce8e6;
+      color: #c5221f;
+      border: 1px solid #f1a29f;
+    }
+
+    .icon {
+      width: 20px;
+      height: 20px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    @media (max-width: 768px) {
+      .stats {
+        display: none;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .themes-list {
+        grid-template-columns: 1fr;
+      }
+
+      .message-header {
+        flex-direction: column;
+      }
+
+      .header-content {
+        flex-wrap: wrap;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-content">
+      <div class="logo">附属中ラジオ管理画面</div>
+      <div class="stats">
+        <div class="stat-item">
+          <div class="stat-number" id="totalMessages">0</div>
+          <div class="stat-label">総件数</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" id="unreadMessages">0</div>
+          <div class="stat-label">未読</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-number" id="activeThemes">0</div>
+          <div class="stat-label">テーマ</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div id="messageAlert" class="alert"></div>
+
+    <!-- タブナビゲーション -->
+    <div class="tabs-nav">
+      <button class="tab-btn active" data-tab="themes" onclick="switchTab('themes')">テーマ管理</button>
+      <button class="tab-btn" data-tab="messages" onclick="switchTab('messages')">お便り</button>
+    </div>
+
+    <!-- テーマ管理タブ -->
+    <div id="themes" class="tab-content active">
+      <div class="section">
+        <div class="section-title">新規テーマを作成</div>
+        <form id="themeForm" style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #e8e8e8;">
+          <div class="form-group">
+            <label for="themeTitle">タイトル</label>
+            <input type="text" id="themeTitle" required placeholder="例: 今週のできごと">
+          </div>
+          <div class="form-group">
+            <label for="themeDescription">説明</label>
+            <textarea id="themeDescription" rows="3" placeholder="テーマの詳細や補足"></textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="startDate">開始日</label>
+              <input type="date" id="startDate">
+            </div>
+            <div class="form-group">
+              <label for="endDate">終了日</label>
+              <input type="date" id="endDate">
+            </div>
+          </div>
+          <button type="submit" class="btn">
+            <span class="btn-icon">+</span>
+            <span class="btn-text">追加</span>
+          </button>
+        </form>
+      </div>
+
+      <div class="section">
+        <div class="section-title">テーマ一覧</div>
+        <div class="themes-list" id="themesList"></div>
+      </div>
+    </div>
+
+    <!-- お便りタブ -->
+    <div id="messages" class="tab-content">
+      <div class="tabs-container" id="messageTabs"></div>
+      <div class="messages-list" id="messagesList"></div>
+    </div>
+  </div>
+  
+  <script>
+    let allMessages = [];
+    let currentTab = 'themes';
+    let messageTab = 'all';
+    let currentThemes = [];
+
+    // トークン認証
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    
+    if (!token) {
+      alert('アクセストークンが必要です。教員からURLを取得してください。');
+    } else {
+      verifyToken(token);
+    }
+    
+    async function verifyToken(token) {
+      try {
+        const response = await fetch(`/api/verify-token/${token}`);
+        const result = await response.json();
+        if (!result.valid) {
+          alert(result.message || '無効なトークンです');
+          document.body.innerHTML = '<div style="text-align: center; padding: 100px; color: #5f6368;"><h1>アクセスが拒否されました</h1><p>有効なトークンが必要です。</p></div>';
+        }
+      } catch (error) {
+        console.error('トークン検証エラー:', error);
+      }
+    }
+
+    function switchTab(tabName) {
+      currentTab = tabName;
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+      document.getElementById(tabName).classList.add('active');
+    }
+
+    async function loadThemes() {
+      try {
+        const response = await fetch('/api/staff/themes');
+        const themes = await response.json();
+        currentThemes = themes;
+        
+        document.getElementById('activeThemes').textContent = themes.length;
+        buildMessageTabs();
+        
+        const container = document.getElementById('themesList');
+        container.innerHTML = '';
+        
+        if (themes.length === 0) {
+          container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><div class="empty-state-text">テーマがまだありません</div></div>';
+          return;
+        }
+
+        themes.forEach(theme => {
+          const card = document.createElement('div');
+          card.className = 'theme-card';
+          
+          let dateStr = '';
+          if (theme.start_date || theme.end_date) {
+            const start = theme.start_date ? new Date(theme.start_date).toLocaleDateString('ja-JP') : '—';
+            const end = theme.end_date ? new Date(theme.end_date).toLocaleDateString('ja-JP') : '—';
+            dateStr = `<div class="theme-card-date"><span>${start}</span><span>〜</span><span>${end}</span></div>`;
+          }
+          
+          card.innerHTML = `
+            <div class="theme-card-title">${theme.title}</div>
+            ${theme.description ? `<div class="theme-card-desc">${theme.description}</div>` : ''}
+            ${dateStr}
+            <div class="theme-card-actions">
+              <button class="btn btn-danger" onclick="deleteTheme(${theme.id}, event)" title="削除">🗑</button>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+      } catch (error) {
+        console.error('テーマ読み込みエラー:', error);
+      }
+    }
+
+    function buildMessageTabs() {
+      const tabsContainer = document.getElementById('messageTabs');
+      tabsContainer.innerHTML = '';
+
+      const tabs = [
+        { key: 'all', label: 'すべて' },
+        { key: 'unclassified', label: '未分類' },
+        ...currentThemes.map(t => ({ key: `theme-${t.id}`, label: t.title }))
+      ];
+
+      tabs.forEach(tab => {
+        const btn = document.createElement('button');
+        btn.className = `filter-tab-btn ${messageTab === tab.key ? 'active' : ''}`;
+        btn.textContent = tab.label;
+        btn.onclick = () => {
+          messageTab = tab.key;
+          buildMessageTabs();
+          renderMessages();
+        };
+        tabsContainer.appendChild(btn);
+      });
+    }
+
+    async function loadMessages() {
+      try {
+        const response = await fetch('/api/staff/messages');
+        const messages = await response.json();
+        allMessages = messages;
+        
+        const unreadCount = messages.filter(m => !m.is_read).length;
+        document.getElementById('totalMessages').textContent = messages.length;
+        document.getElementById('unreadMessages').textContent = unreadCount;
+        renderMessages();
+      } catch (error) {
+        console.error('メッセージ読み込みエラー:', error);
+      }
+    }
+
+    function renderMessages() {
+      const container = document.getElementById('messagesList');
+      container.innerHTML = '';
+
+      let filtered = allMessages;
+      if (messageTab === 'unclassified') {
+        filtered = allMessages.filter(m => !m.share_theme || !m.theme_title);
+      } else if (messageTab.startsWith('theme-')) {
+        const themeId = Number(messageTab.replace('theme-', ''));
+        filtered = allMessages.filter(m => m.share_theme && m.theme_id === themeId);
+      }
+
+      filtered.sort((a, b) => {
+        if (a.is_read !== b.is_read) return a.is_read ? 1 : -1;
+        return new Date(a.created_at) - new Date(b.created_at);
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-text">お便りがありません</div></div>';
+        return;
+      }
+
+      filtered.forEach(message => {
+        const card = document.createElement('div');
+        card.className = `message-card ${message.is_read ? 'read' : ''}`;
+
+        const date = new Date(message.created_at).toLocaleString('ja-JP', { 
+          year: 'numeric', 
+          month: 'short', 
+          day: 'numeric', 
+          hour: '2-digit', 
+          minute: '2-digit' 
+        });
+        const theme = message.share_theme && message.theme_title ? message.theme_title : '未分類';
+
+        let meta = '';
+        if (message.share_name && message.sender_name) {
+          meta += `<span>${message.sender_name}</span>`;
+        }
+        if (message.share_class && message.school_class) {
+          meta += `<span>${message.school_class}</span>`;
+        }
+
+        card.innerHTML = `
+          <div class="message-header">
+            <div class="message-info">
+              <div class="message-theme">${theme}</div>
+              <div class="message-sender">${message.radio_name}</div>
+              ${meta ? `<div class="message-meta">${meta}</div>` : ''}
+            </div>
+            <div style="display: flex; gap: 12px; align-items: flex-start;">
+              <div class="message-date">${date}</div>
+              ${!message.is_read ? `<div class="message-badge">未読</div>` : ''}
+            </div>
+          </div>
+          <div class="message-content">${escapeHtml(message.content)}</div>
+          <div class="message-actions">
+            ${!message.is_read ? `<button class="btn btn-sm" onclick="markAsRead(${message.id})">既読</button>` : ''}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    document.getElementById('themeForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const data = {
+        title: document.getElementById('themeTitle').value,
+        description: document.getElementById('themeDescription').value,
+        start_date: document.getElementById('startDate').value || null,
+        end_date: document.getElementById('endDate').value || null
+      };
+      
+      try {
+        const response = await fetch('/api/staff/themes', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        
+        if (response.ok) {
+          showAlert('テーマを追加しました', 'success');
+          document.getElementById('themeForm').reset();
+          loadThemes();
+        } else {
+          showAlert('エラーが発生しました', 'error');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        showAlert('エラーが発生しました', 'error');
+      }
+    });
+
+    async function deleteTheme(id, event) {
+      event.preventDefault();
+      if (!confirm('このテーマを削除してもよろしいですか?')) return;
+      
+      try {
+        const response = await fetch(`/api/staff/themes/${id}`, { method: 'DELETE' });
+        if (response.ok) {
+          showAlert('テーマを削除しました', 'success');
+          loadThemes();
+        } else {
+          showAlert('削除に失敗しました', 'error');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        showAlert('エラーが発生しました', 'error');
+      }
+    }
+
+    async function markAsRead(id) {
+      try {
+        await fetch(`/api/staff/messages/${id}/read`, { method: 'PUT' });
+        loadMessages();
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    function showAlert(text, type) {
+      const alert = document.getElementById('messageAlert');
+      alert.textContent = text;
+      alert.className = `alert ${type}`;
+      alert.style.display = 'block';
+      setTimeout(() => { alert.style.display = 'none'; }, 4000);
+    }
+
+    loadThemes();
+    loadMessages();
+    setInterval(() => { loadMessages(); }, 30000);
+  </script>
+</body>
+</html>

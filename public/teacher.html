@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>教員用管理画面</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Roboto', 'Noto Sans JP', sans-serif;
+      background: #f5f5f5;
+      min-height: 100vh;
+      color: #202124;
+    }
+    
+    .header {
+      background: white;
+      border-bottom: 1px solid #e8e8e8;
+      padding: 24px;
+      box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3);
+    }
+
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .title {
+      font-size: 24px;
+      font-weight: 500;
+      color: #202124;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: #5f6368;
+      margin-top: 4px;
+    }
+    
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .tabs-nav {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid #e8e8e8;
+      margin-bottom: 24px;
+    }
+
+    .tab-btn {
+      padding: 12px 16px;
+      background: none;
+      border: none;
+      color: #5f6368;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn:hover {
+      color: #202124;
+      background: rgba(60, 64, 67, 0.06);
+    }
+
+    .tab-btn.active {
+      color: #1f71c6;
+      border-bottom-color: #1f71c6;
+    }
+
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .section {
+      background: white;
+      padding: 24px;
+      border-radius: 8px;
+      border: 1px solid #e8e8e8;
+      margin-bottom: 24px;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 500;
+      color: #202124;
+      margin-bottom: 12px;
+    }
+
+    .info-box {
+      background: #e6f4ea;
+      border-left: 3px solid #34a853;
+      padding: 16px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+
+    .info-box p {
+      font-size: 14px;
+      color: #0d652d;
+      line-height: 1.5;
+      margin-bottom: 4px;
+    }
+
+    .info-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .btn {
+      padding: 10px 24px;
+      background: #1f71c6;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn:hover {
+      background: #1666b2;
+      box-shadow: 0 1px 3px 0 rgba(60, 64, 67, 0.3);
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 13px;
+    }
+
+    .url-box {
+      background: #f8f9fa;
+      padding: 16px;
+      border-radius: 4px;
+      margin: 16px 0;
+      border: 1px solid #e8e8e8;
+    }
+
+    .url-text {
+      font-family: 'Courier New', monospace;
+      color: #1f71c6;
+      word-break: break-all;
+      line-height: 1.6;
+      font-size: 13px;
+    }
+
+    .url-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .alert {
+      padding: 12px 16px;
+      border-radius: 4px;
+      margin-bottom: 16px;
+      display: none;
+      animation: slideDown 0.3s ease;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .alert.success {
+      background: #e6f4ea;
+      color: #0d652d;
+      border: 1px solid #a8d5ba;
+    }
+
+    .alert.error {
+      background: #fce8e6;
+      color: #c5221f;
+      border: 1px solid #f1a29f;
+    }
+
+    .log-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .log-table thead {
+      background: #f8f9fa;
+      border-bottom: 1px solid #e8e8e8;
+    }
+
+    .log-table th {
+      padding: 12px;
+      text-align: left;
+      color: #5f6368;
+      font-weight: 500;
+    }
+
+    .log-table td {
+      padding: 12px;
+      border-bottom: 1px solid #e8e8e8;
+      color: #202124;
+    }
+
+    .log-table tbody tr:hover {
+      background: #f8f9fa;
+    }
+
+    .log-content {
+      max-width: 300px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      cursor: pointer;
+    }
+
+    .log-content:hover {
+      text-decoration: underline;
+      color: #1f71c6;
+    }
+
+    .log-content.expanded {
+      white-space: normal;
+      word-break: break-word;
+      max-width: none;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #5f6368;
+    }
+
+    .empty-state-icon {
+      font-size: 40px;
+      margin-bottom: 12px;
+    }
+
+    .empty-state-text {
+      font-size: 14px;
+    }
+
+    .overflow-container {
+      overflow-x: auto;
+      border-radius: 4px;
+      border: 1px solid #e8e8e8;
+    }
+
+    @media (max-width: 768px) {
+      .header-content {
+        padding: 0 16px;
+      }
+
+      .container {
+        padding: 16px;
+      }
+
+      .section {
+        padding: 16px;
+      }
+
+      .log-table {
+        font-size: 12px;
+      }
+
+      .log-table th,
+      .log-table td {
+        padding: 8px;
+      }
+
+      .log-content {
+        max-width: 150px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-content">
+      <div class="title">附属中ラジオ</div>
+      <div class="subtitle">教員用管理画面</div>
+
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="tabs-nav">
+      <button class="tab-btn active" data-tab="url" onclick="switchTab('url')">URL生成</button>
+      <button class="tab-btn" data-tab="logs" onclick="switchTab('logs')">送信ログ</button>
+    </div>
+
+    <div id="messageAlert" class="alert"></div>
+
+    <!-- URL生成タブ -->
+    <div id="url" class="tab-content active">
+      <div class="section">
+        <div class="section-title">管理画面 URL を生成</div>
+        <div class="info-box">
+          <p>広報部員が使用する管理画面へのアクセス URL を生成します。</p>
+          <p>一度生成した URL は、新しい URL を生成するまでずっと有効です。</p>
+          <p>部員に共有してください。</p>
+        </div>
+
+        <button class="btn" onclick="generateURL()" id="generateBtn">
+          <span>+</span>
+          <span>URL を生成</span>
+        </button>
+
+        <div id="urlResult" style="display: none; margin-top: 20px;">
+          <div class="url-box">
+            <div class="url-text" id="generatedURL"></div>
+          </div>
+          <div class="url-actions">
+            <button class="btn btn-sm" onclick="copyURL()">コピー</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 送信ログタブ -->
+    <div id="logs" class="tab-content">
+      <div class="section">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <div class="section-title">お便り送信ログ</div>
+          <button class="btn btn-sm" onclick="loadLogs()">更新</button>
+        </div>
+
+        <div class="overflow-container">
+          <table class="log-table">
+            <thead>
+              <tr>
+                <th>送信日時</th>
+                <th>IP アドレス</th>
+                <th>本名</th>
+                <th>ラジオネーム</th>
+                <th>クラス</th>
+                <th>内容</th>
+              </tr>
+            </thead>
+            <tbody id="logsTableBody">
+              <tr>
+                <td colspan="6" style="text-align: center; padding: 40px; color: #999;">ログを読み込み中...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    let currentURL = '';
+    
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      
+      document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+      document.getElementById(tabName).classList.add('active');
+
+      if (tabName === 'logs') {
+        loadLogs();
+      }
+    }
+    
+    async function loadExistingToken() {
+      try {
+        const response = await fetch('/api/teacher/get-current-token');
+        const result = await response.json();
+        
+        if (result.url) {
+          currentURL = result.url;
+          document.getElementById('generatedURL').textContent = result.url;
+          document.getElementById('urlResult').style.display = 'block';
+          document.getElementById('generateBtn').innerHTML = '<span>🔄</span><span>URL を再生成</span>';
+        }
+      } catch (error) {
+        console.error('既存トークンの読み込みに失敗しました:', error);
+      }
+    }
+    
+    async function generateURL() {
+      try {
+        const response = await fetch('/api/teacher/generate-url', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+          currentURL = result.url;
+          document.getElementById('generatedURL').textContent = result.url;
+          document.getElementById('urlResult').style.display = 'block';
+          document.getElementById('generateBtn').innerHTML = '<span>🔄</span><span>URL を再生成</span>';
+          showAlert('新しい URL を生成しました', 'success');
+        } else {
+          showAlert(result.error || 'URL 生成に失敗しました', 'error');
+        }
+      } catch (error) {
+        showAlert('URL 生成に失敗しました', 'error');
+        console.error('Error:', error);
+      }
+    }
+    
+    function copyURL() {
+      navigator.clipboard.writeText(currentURL).then(() => {
+        showAlert('URL をクリップボードにコピーしました', 'success');
+      }).catch(err => {
+        showAlert('コピーに失敗しました', 'error');
+        console.error('Copy failed:', err);
+      });
+    }
+    
+    async function loadLogs() {
+      try {
+        const response = await fetch('/api/teacher/logs');
+        const logs = await response.json();
+        
+        const tbody = document.getElementById('logsTableBody');
+        tbody.innerHTML = '';
+        
+        if (logs.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-text">ログがまだありません</div></div></td></tr>';
+          return;
+        }
+        
+        logs.forEach(log => {
+          const row = document.createElement('tr');
+          const date = new Date(log.created_at).toLocaleString('ja-JP', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+          });
+          
+          row.innerHTML = `
+            <td>${date}</td>
+            <td>${log.ip_address || '—'}</td>
+            <td>${log.sender_name || '—'}</td>
+            <td>${log.radio_name}</td>
+            <td>${log.school_class || '—'}</td>
+            <td><span class="log-content" onclick="toggleExpand(event)">${escapeHtml(log.content).substring(0, 50)}${log.content.length > 50 ? '...' : ''}</span></td>
+          `;
+          tbody.appendChild(row);
+        });
+      } catch (error) {
+        console.error('ログ読み込みエラー:', error);
+        document.getElementById('logsTableBody').innerHTML = '<tr><td colspan="6"><div class="empty-state"><div class="empty-state-text">ログを読み込めませんでした</div></div></td></tr>';
+      }
+    }
+    
+    function toggleExpand(event) {
+      const cell = event.target;
+      if (cell.classList.contains('expanded')) {
+        cell.classList.remove('expanded');
+      } else {
+        cell.classList.add('expanded');
+      }
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+    
+    function showAlert(text, type) {
+      const alert = document.getElementById('messageAlert');
+      alert.textContent = text;
+      alert.className = `alert ${type}`;
+      alert.style.display = 'block';
+      setTimeout(() => { alert.style.display = 'none'; }, 4000);
+    }
+    
+    // 初期化
+    loadExistingToken();
+  </script>
+</body>
+</html>

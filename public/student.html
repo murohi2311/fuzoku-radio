@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>附属中ラジオ</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      padding: 40px;
+    }
+    
+    h1 {
+      color: #667eea;
+      text-align: center;
+      margin-bottom: 10px;
+      font-size: 2em;
+    }
+    
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 0.95em;
+    }
+    
+    .theme-selector {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    
+    .theme-selector h2 {
+      font-size: 1.5em;
+      margin-bottom: 15px;
+      font-weight: 300;
+    }
+    
+    .theme-title {
+      font-size: 2.5em;
+      font-weight: bold;
+      margin-bottom: 15px;
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .theme-navigation {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+    }
+    
+    .theme-nav-btn {
+      background: rgba(255, 255, 255, 0.3);
+      border: 2px solid white;
+      color: white;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      font-size: 1.5em;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .theme-nav-btn:hover {
+      background: rgba(255, 255, 255, 0.5);
+      transform: scale(1.1);
+    }
+    
+    .theme-nav-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .theme-counter {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.9em;
+    }
+    
+    .form-group {
+      margin-bottom: 25px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+      font-weight: 600;
+      font-size: 0.95em;
+    }
+    
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 1em;
+      transition: border-color 0.3s;
+      font-family: inherit;
+    }
+    
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    
+    textarea {
+      resize: vertical;
+      min-height: 150px;
+    }
+    
+    .required {
+      color: #e74c3c;
+    }
+    
+    button {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    .message {
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: none;
+    }
+    
+    .message.success {
+      background-color: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+    }
+    
+    .message.error {
+      background-color: #f8d7da;
+      border: 1px solid #f5c6cb;
+      color: #721c24;
+    }
+    
+    .char-count {
+      text-align: right;
+      font-size: 0.85em;
+      color: #666;
+      margin-top: 5px;
+    }
+    
+    .theme-info {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+    
+    .theme-info p {
+      color: #666;
+      line-height: 1.6;
+    }
+    
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>お便り送信</h1>
+    <p class="subtitle">お昼の附属中ラジオで読み上げるお便りを送信できます</p>
+    
+    <div id="messageAlert" class="message"></div>
+    
+    <!-- テーマセレクター -->
+    <div class="theme-selector" id="themeSelector" style="display: none;">
+      <h2>テーマ</h2>
+      <div class="theme-title" id="currentThemeTitle">テーマなし</div>
+      <div id="themeDescription" class="theme-info" style="display: none; margin-top: 15px; background: rgba(255, 255, 255, 0.1); color: white;">
+        <p id="themeDescriptionText"></p>
+      </div>
+      <div class="theme-navigation">
+        <button type="button" class="theme-nav-btn" id="prevThemeBtn" onclick="previousTheme()">←</button>
+        <span class="theme-counter"><span id="currentThemeIndex">0</span> / <span id="totalThemes">0</span></span>
+        <button type="button" class="theme-nav-btn" id="nextThemeBtn" onclick="nextTheme()">→</button>
+      </div>
+    </div>
+    
+    <form id="messageForm">
+      <div class="form-group">
+        <label for="radioName">ラジオネーム <span class="required">*</span></label>
+        <input type="text" id="radioName" name="radioName" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="content">お便りの内容 <span class="required">*</span></label>
+        <textarea id="content" name="content" required placeholder="お便りの内容を入力してください..."></textarea>
+        <div class="char-count">
+          <span id="charCount">0</span> 文字
+        </div>
+      </div>
+      
+      <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+        <p style="font-weight: 600; margin-bottom: 10px; color: #333;">放送者に共有してもよい情報にチェックを入れてください</p>
+        <p style="font-size: 0.85em; color: #999; margin-bottom: 15px;">※共有しない場合もトラブル防止の観点から入力は必須です</p>
+        
+        <div style="margin-bottom: 10px;">
+          <label style="display: flex; align-items: center; cursor: pointer;">
+            <input type="checkbox" id="shareName" style="width: auto; margin-right: 10px;">
+            <span>名前</span>
+          </label>
+          <input type="text" id="senderName" name="senderName" required placeholder="例：附属 太郎" style="margin-top: 5px; margin-left: 30px;">
+        </div>
+        
+        <div style="margin-bottom: 10px;">
+          <label style="display: flex; align-items: center; cursor: pointer;">
+            <input type="checkbox" id="shareClass" style="width: auto; margin-right: 10px;">
+            <span>学年・クラス</span>
+          </label>
+          <div class="form-row" style="margin-top: 5px; margin-left: 30px;">
+            <select id="schoolYear" name="schoolYear" required>
+              <option value="">学年</option>
+              <option value="1">1年</option>
+              <option value="2">2年</option>
+              <option value="3">3年</option>
+            </select>
+            <select id="schoolClass" name="schoolClass" required>
+              <option value="">クラス</option>
+              <option value="A">A組</option>
+              <option value="B">B組</option>
+              <option value="C">C組</option>
+              <option value="D">D組</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      
+      <button type="submit">送信</button>
+    </form>
+  </div>
+  
+  <script>
+    let allThemes = [];
+    let currentThemeIndex = -1;
+    let selectedThemeId = null;
+    
+    // テーマの読み込み
+    async function loadThemes() {
+      try {
+        const response = await fetch('/api/student/themes');
+        allThemes = await response.json();
+        
+        if (allThemes.length > 0) {
+          document.getElementById('themeSelector').style.display = 'block';
+          document.getElementById('totalThemes').textContent = allThemes.length;
+          currentThemeIndex = 0;
+          displayCurrentTheme();
+        }
+      } catch (error) {
+        console.error('テーマの読み込みに失敗しました:', error);
+      }
+    }
+    
+    function displayCurrentTheme() {
+      if (allThemes.length === 0) return;
+      
+      const theme = allThemes[currentThemeIndex];
+      document.getElementById('currentThemeTitle').textContent = theme.title;
+      document.getElementById('currentThemeIndex').textContent = currentThemeIndex + 1;
+      selectedThemeId = theme.id;
+      
+      if (theme.description) {
+        document.getElementById('themeDescriptionText').textContent = theme.description;
+        document.getElementById('themeDescription').style.display = 'block';
+      } else {
+        document.getElementById('themeDescription').style.display = 'none';
+      }
+      
+      // ボタンの有効/無効を更新
+      document.getElementById('prevThemeBtn').disabled = currentThemeIndex === 0;
+      document.getElementById('nextThemeBtn').disabled = currentThemeIndex === allThemes.length - 1;
+    }
+    
+    function previousTheme() {
+      if (currentThemeIndex > 0) {
+        currentThemeIndex--;
+        displayCurrentTheme();
+      }
+    }
+    
+    function nextTheme() {
+      if (currentThemeIndex < allThemes.length - 1) {
+        currentThemeIndex++;
+        displayCurrentTheme();
+      }
+    }
+    
+    // 文字数カウント
+    document.getElementById('content').addEventListener('input', function() {
+      document.getElementById('charCount').textContent = this.value.length;
+    });
+    
+    // フォーム送信
+    document.getElementById('messageForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const shareName = document.getElementById('shareName').checked;
+      const shareClass = document.getElementById('shareClass').checked;
+      
+      const formData = {
+        radio_name: document.getElementById('radioName').value,
+        content: document.getElementById('content').value,
+        sender_name: document.getElementById('senderName').value,
+        school_year: document.getElementById('schoolYear').value,
+        school_class: document.getElementById('schoolClass').value,
+        theme_id: selectedThemeId,
+        share_name: shareName,
+        share_class: shareClass,
+        share_theme: selectedThemeId ? true : false
+      };
+      
+      try {
+        const response = await fetch('/api/student/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(formData)
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+          showMessage('お便りを送信しました！ありがとうございます。', 'success');
+          document.getElementById('messageForm').reset();
+          document.getElementById('charCount').textContent = '0';
+        } else {
+          showMessage(result.error || '送信に失敗しました', 'error');
+        }
+      } catch (error) {
+        showMessage('送信に失敗しました。もう一度お試しください。', 'error');
+        console.error('Error:', error);
+      }
+    });
+    
+    function showMessage(text, type) {
+      const alert = document.getElementById('messageAlert');
+      alert.textContent = text;
+      alert.className = `message ${type}`;
+      alert.style.display = 'block';
+      
+      setTimeout(() => {
+        alert.style.display = 'none';
+      }, 5000);
+    }
+    
+    // 初期化
+    loadThemes();
+  </script>
+</body>
+</html>
