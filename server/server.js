@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const { v4: uuidv4 } = require('uuid');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/school-broadcast';
 
 mongoose.set('strictQuery', true);
@@ -299,7 +299,7 @@ app.get('/', (req, res) => {
 });
 
 mongoose
-  .connect(MONGO_URI)
+  .connect(MONGO_URI, { serverSelectionTimeoutMS: 5000 })
   .then(() => {
     console.log('MongoDBに接続しました');
     app.listen(PORT, () => {
