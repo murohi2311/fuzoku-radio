@@ -704,12 +704,7 @@
         const theme = message.share_theme && message.theme_title ? message.theme_title : '未分類';
 
         let meta = '';
-        if (message.share_name && message.sender_name) {
-          meta += `<span>${message.sender_name}</span>`;
-        }
-        if (message.share_class && message.school_class) {
-          meta += `<span>${message.school_class}</span>`;
-        }
+        // 広報部員には名前と学年・クラスを表示しない
 
         card.innerHTML = `
           <div class="message-header">
