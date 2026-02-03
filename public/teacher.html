@@ -161,12 +161,36 @@
       font-size: 13px;
     }
 
+    .btn-warning {
+      background: #f9ab00;
+      color: #202124;
+    }
+
+    .btn-warning:hover {
+      background: #ea9200;
+      box-shadow: 0 1px 3px 0 rgba(60, 64, 67, 0.3);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: #1f71c6;
+      border: 1px solid #dadce0;
+    }
+
+    .btn-secondary:hover {
+      background: #f8f9fa;
+      border-color: #1f71c6;
+    }
+
     .url-box {
       background: #f8f9fa;
       padding: 16px;
       border-radius: 4px;
       margin: 16px 0;
       border: 1px solid #e8e8e8;
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
 
     .url-text {
@@ -175,12 +199,36 @@
       word-break: break-all;
       line-height: 1.6;
       font-size: 13px;
+      flex: 1;
     }
 
-    .url-actions {
+    .copy-icon-btn {
+      background: #1f71c6;
+      border: none;
+      border-radius: 4px;
+      width: 36px;
+      height: 36px;
       display: flex;
-      gap: 8px;
-      margin-top: 12px;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .copy-icon-btn:hover {
+      background: #1666b2;
+      box-shadow: 0 1px 3px 0 rgba(60, 64, 67, 0.3);
+    }
+
+    .copy-icon-btn:active {
+      transform: scale(0.95);
+    }
+
+    .copy-icon-btn svg {
+      width: 18px;
+      height: 18px;
+      fill: white;
     }
 
     .alert {
@@ -337,17 +385,40 @@
           <p>部員に共有してください。</p>
         </div>
 
-        <button class="btn" onclick="generateURL()" id="generateBtn">
-          <span>+</span>
-          <span>URL を生成</span>
-        </button>
+        <div id="generateSection">
+          <button class="btn" onclick="generateURL()" id="generateBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+              <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+            </svg>
+            <span>URL を生成</span>
+          </button>
+        </div>
+
+        <div id="regenerateSection" style="display: none;">
+          <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+            <button class="btn btn-warning" onclick="regenerateURL()">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                <path d="M12 6v3l4-4-4-4v3c-4.42 0-8 3.58-8 8 0 1.57.46 3.03 1.24 4.26L6.7 14.8c-.45-.83-.7-1.79-.7-2.8 0-3.31 2.69-6 6-6zm6.76 1.74L17.3 9.2c.44.84.7 1.79.7 2.8 0 3.31-2.69 6-6 6v-3l-4 4 4 4v-3c4.42 0 8-3.58 8-8 0-1.57-.46-3.03-1.24-4.26z"/>
+              </svg>
+              <span>URL を再生成</span>
+            </button>
+            <div style="font-size: 13px; color: #ea8600; display: flex; align-items: center; gap: 6px;">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+              </svg>
+              <span>再生成すると、現在の URL は無効になります</span>
+            </div>
+          </div>
+        </div>
 
         <div id="urlResult" style="display: none; margin-top: 20px;">
           <div class="url-box">
             <div class="url-text" id="generatedURL"></div>
-          </div>
-          <div class="url-actions">
-            <button class="btn btn-sm" onclick="copyURL()">コピー</button>
+            <button class="copy-icon-btn" onclick="copyURL()" title="URLをコピー">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+              </svg>
+            </button>
           </div>
         </div>
       </div>
@@ -358,7 +429,11 @@
       <div class="section">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
           <div class="section-title">お便り送信ログ</div>
-          <button class="btn btn-sm" onclick="loadLogs()">更新</button>
+          <button class="copy-icon-btn" onclick="loadLogs()" title="ログを更新">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+            </svg>
+          </button>
         </div>
 
         <div class="overflow-container">
@@ -408,7 +483,10 @@
           currentURL = result.url;
           document.getElementById('generatedURL').textContent = result.url;
           document.getElementById('urlResult').style.display = 'block';
-          document.getElementById('generateBtn').innerHTML = '<span>🔄</span><span>URL を再生成</span>';
+          
+          // ボタン表示を切り替え
+          document.getElementById('generateSection').style.display = 'none';
+          document.getElementById('regenerateSection').style.display = 'block';
         }
       } catch (error) {
         console.error('既存トークンの読み込みに失敗しました:', error);
@@ -428,8 +506,38 @@
           currentURL = result.url;
           document.getElementById('generatedURL').textContent = result.url;
           document.getElementById('urlResult').style.display = 'block';
-          document.getElementById('generateBtn').innerHTML = '<span>🔄</span><span>URL を再生成</span>';
+          
+          // ボタン表示を切り替え
+          document.getElementById('generateSection').style.display = 'none';
+          document.getElementById('regenerateSection').style.display = 'block';
+          
           showAlert('新しい URL を生成しました', 'success');
+        } else {
+          showAlert(result.error || 'URL 生成に失敗しました', 'error');
+        }
+      } catch (error) {
+        showAlert('URL 生成に失敗しました', 'error');
+        console.error('Error:', error);
+      }
+    }
+    
+    async function regenerateURL() {
+      if (!confirm('新しいURLを生成すると、現在のURLは無効になります。\n本当に再生成しますか?')) {
+        return;
+      }
+      
+      try {
+        const response = await fetch('/api/teacher/generate-url', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+          currentURL = result.url;
+          document.getElementById('generatedURL').textContent = result.url;
+          showAlert('新しい URL を生成しました。古い URL は無効になりました', 'success');
         } else {
           showAlert(result.error || 'URL 生成に失敗しました', 'error');
         }

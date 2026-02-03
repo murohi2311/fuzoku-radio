@@ -169,6 +169,52 @@
       gap: 16px;
     }
 
+    .form-card {
+      background: white;
+      padding: 24px;
+      border-radius: 12px;
+      border: 1px solid #e8e8e8;
+      box-shadow: 0 1px 3px rgba(60, 64, 67, 0.08);
+      transition: all 0.3s ease;
+    }
+
+    .form-card:hover {
+      box-shadow: 0 2px 8px rgba(60, 64, 67, 0.15);
+    }
+
+    .form-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid #f1f3f4;
+    }
+
+    .form-header-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #1f71c6, #34a853);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .form-header-text h3 {
+      font-size: 18px;
+      font-weight: 500;
+      color: #202124;
+      margin: 0;
+    }
+
+    .form-header-text p {
+      font-size: 13px;
+      color: #5f6368;
+      margin: 4px 0 0 0;
+    }
+
     .btn {
       padding: 10px 24px;
       background: #1f71c6;
@@ -193,12 +239,22 @@
       transform: scale(0.98);
     }
 
-    .btn-icon {
-      font-size: 16px;
+    .btn-primary {
+      background: linear-gradient(135deg, #1f71c6, #1666b2);
+      padding: 12px 28px;
+      border-radius: 6px;
+      font-size: 15px;
+      box-shadow: 0 2px 4px rgba(31, 113, 198, 0.2);
     }
 
-    .btn-text {
-      display: none;
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #1666b2, #145a9e);
+      box-shadow: 0 3px 8px rgba(31, 113, 198, 0.3);
+      transform: translateY(-1px);
+    }
+
+    .btn-icon {
+      font-size: 16px;
     }
 
     .btn-sm {
@@ -208,18 +264,60 @@
 
     .btn-danger {
       background: #d33b27;
-      padding: 6px 8px;
-      font-size: 16px;
+      padding: 8px 12px;
+      font-size: 20px;
+      line-height: 1;
+      min-width: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      transition: all 0.2s ease;
     }
 
     .btn-danger:hover {
       background: #c5221f;
+      transform: scale(1.08);
+      box-shadow: 0 2px 6px rgba(211, 59, 39, 0.3);
+    }
+
+    .copy-icon-btn {
+      background: #1f71c6;
+      border: none;
+      border-radius: 4px;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .copy-icon-btn:hover {
+      background: #1666b2;
+      box-shadow: 0 1px 3px 0 rgba(60, 64, 67, 0.3);
+    }
+
+    .copy-icon-btn:active {
+      transform: scale(0.95);
+    }
+
+    .copy-icon-btn svg {
+      width: 18px;
+      height: 18px;
+      fill: white;
     }
 
     .themes-list {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
       gap: 12px;
+    }
+
+    .themes-list .empty-state {
+      grid-column: 1 / -1;
     }
 
     .theme-card {
@@ -278,9 +376,20 @@
 
     .tabs-container {
       display: flex;
-      flex-wrap: wrap;
       gap: 8px;
       margin-bottom: 20px;
+      align-items: center;
+    }
+
+    .tabs-container #messageTabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tabs-container .copy-icon-btn {
+      margin-left: auto;
+      flex-shrink: 0;
     }
 
     .filter-tab-btn {
@@ -347,7 +456,6 @@
     .message-theme {
       font-size: 12px;
       color: #80868b;
-      text-transform: uppercase;
       letter-spacing: 0.5px;
       margin-bottom: 4px;
     }
@@ -382,6 +490,11 @@
       border-radius: 12px;
       font-size: 12px;
       font-weight: 500;
+    }
+
+    .message-badge.read {
+      background: #e6f4ea;
+      color: #0d652d;
     }
 
     .message-content {
@@ -510,29 +623,35 @@
     <!-- テーマ管理タブ -->
     <div id="themes" class="tab-content active">
       <div class="section">
-        <div class="section-title">新規テーマを作成</div>
-        <form id="themeForm" style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #e8e8e8;">
-          <div class="form-group">
-            <label for="themeTitle">タイトル</label>
-            <input type="text" id="themeTitle" required placeholder="例: 今週のできごと">
+        <form id="themeForm" class="form-card">
+          <div class="form-header">
+            <div class="form-header-icon">📝</div>
+            <div class="form-header-text">
+              <h3>新規テーマを作成</h3>
+              <p>生徒が投稿できる新しいテーマを追加します</p>
+            </div>
           </div>
           <div class="form-group">
-            <label for="themeDescription">説明</label>
-            <textarea id="themeDescription" rows="3" placeholder="テーマの詳細や補足"></textarea>
+            <label for="themeTitle">テーマタイトル <span style="color: #d33b27;">*</span></label>
+            <input type="text" id="themeTitle" required placeholder="例: 今週のできごと、学校生活について">
+          </div>
+          <div class="form-group">
+            <label for="themeDescription">説明・補足</label>
+            <textarea id="themeDescription" rows="3" placeholder="このテーマについての詳しい説明や、投稿する際の注意事項などを記入してください"></textarea>
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label for="startDate">開始日</label>
+              <label for="startDate">📅 開始日</label>
               <input type="date" id="startDate">
             </div>
             <div class="form-group">
-              <label for="endDate">終了日</label>
+              <label for="endDate">📅 終了日</label>
               <input type="date" id="endDate">
             </div>
           </div>
-          <button type="submit" class="btn">
+          <button type="submit" class="btn btn-primary">
             <span class="btn-icon">+</span>
-            <span class="btn-text">追加</span>
+            <span>テーマを作成</span>
           </button>
         </form>
       </div>
@@ -545,7 +664,14 @@
 
     <!-- お便りタブ -->
     <div id="messages" class="tab-content">
-      <div class="tabs-container" id="messageTabs"></div>
+      <div class="tabs-container">
+        <div id="messageTabs" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
+        <button class="copy-icon-btn" onclick="reloadData()" title="データを再読み込み">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+          </svg>
+        </button>
+      </div>
       <div class="messages-list" id="messagesList"></div>
     </div>
   </div>
@@ -556,12 +682,17 @@
     let messageTab = 'all';
     let currentThemes = [];
 
-    // トークン認証
+    // URLパラメータを取得
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
+    const tabParam = urlParams.get('tab');
+    if (tabParam === 'messages') {
+      currentTab = 'messages';
+    }
     
     if (!token) {
-      alert('アクセストークンが必要です。教員からURLを取得してください。');
+      alert('無効なURLです。教員からURLを取得してください。');
+      document.body.innerHTML = '<div style="text-align: center; padding: 100px; color: #5f6368;"><h1>アクセスが拒否されました</h1><p>教員に有効なURLを発行してもらう必要があります。</p></div>';
     } else {
       verifyToken(token);
     }
@@ -571,8 +702,8 @@
         const response = await fetch(`/api/verify-token/${token}`);
         const result = await response.json();
         if (!result.valid) {
-          alert(result.message || '無効なトークンです');
-          document.body.innerHTML = '<div style="text-align: center; padding: 100px; color: #5f6368;"><h1>アクセスが拒否されました</h1><p>有効なトークンが必要です。</p></div>';
+          alert(result.message || '無効なURLです。');
+          document.body.innerHTML = '<div style="text-align: center; padding: 100px; color: #5f6368;"><h1>アクセスが拒否されました</h1><p>教員に有効なURLを発行してもらう必要があります。</p></div>';
         }
       } catch (error) {
         console.error('トークン検証エラー:', error);
@@ -581,6 +712,11 @@
 
     function switchTab(tabName) {
       currentTab = tabName;
+      // URLを更新
+      const newUrl = new URL(window.location);
+      newUrl.searchParams.set('tab', tabName);
+      window.history.replaceState({}, '', newUrl);
+      
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
       document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
@@ -620,7 +756,7 @@
             ${theme.description ? `<div class="theme-card-desc">${theme.description}</div>` : ''}
             ${dateStr}
             <div class="theme-card-actions">
-              <button class="btn btn-danger" onclick="deleteTheme(${theme.id}, event)" title="削除">🗑</button>
+              <button class="btn btn-danger" onclick="deleteTheme('${theme.id}')" title="削除">×</button>
             </div>
           `;
           container.appendChild(card);
@@ -676,8 +812,8 @@
       if (messageTab === 'unclassified') {
         filtered = allMessages.filter(m => !m.share_theme || !m.theme_title);
       } else if (messageTab.startsWith('theme-')) {
-        const themeId = Number(messageTab.replace('theme-', ''));
-        filtered = allMessages.filter(m => m.share_theme && m.theme_id === themeId);
+        const themeId = messageTab.replace('theme-', '');
+        filtered = allMessages.filter(m => m.share_theme && String(m.theme_id) === String(themeId));
       }
 
       filtered.sort((a, b) => {
@@ -715,12 +851,12 @@
             </div>
             <div style="display: flex; gap: 12px; align-items: flex-start;">
               <div class="message-date">${date}</div>
-              ${!message.is_read ? `<div class="message-badge">未読</div>` : ''}
+              <div class="message-badge ${message.is_read ? 'read' : ''}">${message.is_read ? '既読' : '未読'}</div>
             </div>
           </div>
           <div class="message-content">${escapeHtml(message.content)}</div>
           <div class="message-actions">
-            ${!message.is_read ? `<button class="btn btn-sm" onclick="markAsRead(${message.id})">既読</button>` : ''}
+            ${!message.is_read ? `<button class="btn btn-sm" onclick="markAsRead('${message.id}')">既読</button>` : ''}
           </div>
         `;
         container.appendChild(card);
@@ -763,8 +899,7 @@
       }
     });
 
-    async function deleteTheme(id, event) {
-      event.preventDefault();
+    async function deleteTheme(id) {
       if (!confirm('このテーマを削除してもよろしいですか?')) return;
       
       try {
@@ -772,6 +907,7 @@
         if (response.ok) {
           showAlert('テーマを削除しました', 'success');
           loadThemes();
+          loadMessages();
         } else {
           showAlert('削除に失敗しました', 'error');
         }
@@ -783,10 +919,16 @@
 
     async function markAsRead(id) {
       try {
-        await fetch(`/api/staff/messages/${id}/read`, { method: 'PUT' });
-        loadMessages();
+        const response = await fetch(`/api/staff/messages/${id}/read`, { method: 'PUT' });
+        if (response.ok) {
+          showAlert('既読にしました', 'success');
+          loadMessages();
+        } else {
+          showAlert('既読化に失敗しました', 'error');
+        }
       } catch (error) {
         console.error('Error:', error);
+        showAlert('エラーが発生しました', 'error');
       }
     }
 
@@ -798,8 +940,18 @@
       setTimeout(() => { alert.style.display = 'none'; }, 4000);
     }
 
+    function reloadData() {
+      showAlert('データを読み込んでいます...', 'success');
+      loadThemes();
+      loadMessages();
+    }
+
     loadThemes();
     loadMessages();
+    // 初期時に指定されたタブを表示
+    if (currentTab === 'messages') {
+      switchTab('messages');
+    }
     setInterval(() => { loadMessages(); }, 30000);
   </script>
 </body>
