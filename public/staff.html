@@ -157,10 +157,26 @@
       transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
 
+    input[type="date"] {
+      padding-right: 36px;
+    }
+
     input:focus, textarea:focus {
       outline: none;
       border-color: #1f71c6;
       box-shadow: 0 0 0 3px rgba(31, 113, 198, 0.1);
+    }
+
+    /* Safari用 */
+    input[type="date"] {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+    }
+
+    input[type="date"]::-webkit-calendar-picker-indicator {
+      cursor: pointer;
+      padding: 0 4px;
     }
 
     .form-row {
@@ -636,16 +652,16 @@
             <input type="text" id="themeTitle" required placeholder="例: 今週のできごと、学校生活について">
           </div>
           <div class="form-group">
-            <label for="themeDescription">説明・補足</label>
+            <label for="themeDescription">説明・補足 <span style="color: #5f6368; font-weight: 400;">（任意）</span></label>
             <textarea id="themeDescription" rows="3" placeholder="このテーマについての詳しい説明や、投稿する際の注意事項などを記入してください"></textarea>
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label for="startDate">📅 開始日</label>
+              <label for="startDate">📅 開始日 <span style="color: #5f6368; font-weight: 400;">（任意）</span></label>
               <input type="date" id="startDate">
             </div>
             <div class="form-group">
-              <label for="endDate">📅 終了日</label>
+              <label for="endDate">📅 終了日 <span style="color: #5f6368; font-weight: 400;">（任意）</span></label>
               <input type="date" id="endDate">
             </div>
           </div>
@@ -869,14 +885,49 @@
       return div.innerHTML;
     }
 
+    // 開始日が変更された時に終了日のmin属性を更新
+    document.getElementById('startDate').addEventListener('change', function() {
+      const startDate = this.value;
+      const endDateInput = document.getElementById('endDate');
+      if (startDate) {
+        endDateInput.min = startDate;
+        // 終了日がすでに開始日より前に設定されている場合はクリア
+        if (endDateInput.value && endDateInput.value < startDate) {
+          endDateInput.value = '';
+        }
+      }
+    });
+
+    // 終了日が変更された時に開始日のmax属性を更新
+    document.getElementById('endDate').addEventListener('change', function() {
+      const endDate = this.value;
+      const startDateInput = document.getElementById('startDate');
+      if (endDate) {
+        startDateInput.max = endDate;
+        // 開始日がすでに終了日より後に設定されている場合はクリア
+        if (startDateInput.value && startDateInput.value > endDate) {
+          startDateInput.value = '';
+        }
+      }
+    });
+
     document.getElementById('themeForm').addEventListener('submit', async function(e) {
       e.preventDefault();
+      
+      const startDate = document.getElementById('startDate').value;
+      const endDate = document.getElementById('endDate').value;
+      
+      // 開始日と終了日の検証
+      if (startDate && endDate && startDate > endDate) {
+        showAlert('終了日は開始日以降の日付を設定してください', 'error');
+        return;
+      }
       
       const data = {
         title: document.getElementById('themeTitle').value,
         description: document.getElementById('themeDescription').value,
-        start_date: document.getElementById('startDate').value || null,
-        end_date: document.getElementById('endDate').value || null
+        start_date: startDate || null,
+        end_date: endDate || null
       };
       
       try {
